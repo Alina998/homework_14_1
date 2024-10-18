@@ -48,9 +48,8 @@ class Category(Product):
         Category.category_count += 1
 
     """Функция, которая вносит в список товваров категории объекты класса Product"""
-    def add_product(self, product1: Product):
-        self.products.append(product1)
-        # self.products.append(product2)
+    def add_product(self, product: Product):
+        self.products.append(product)
         # self.products.append(product3)
 
         # category1 = Category("Смартфоны","Смартфоны, как средство не только коммуникации,
