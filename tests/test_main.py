@@ -38,25 +38,25 @@ def test_add_product_to_category(category, product):
 
 
 def test_product_price_increase(product):
-    original_price = product._price
-    product._price = 150.0  # Устанавливаем новую цену
-    assert product._price == 150.0
-    assert product._price > original_price
+    original_price = product.price
+    product.price = 150.0  # Устанавливаем новую цену
+    assert product.price == 150.0
+    assert product.price > original_price
 
 
 @mock.patch("builtins.input", side_effect=["y"])
 def test_product_price_decrease_confirm(mock_input, product):
-    original_price = product._price
+    original_price = product.price
     product.price = 50.0  # Снижаем цену с подтверждением
-    assert product._price == 50.0
-    assert product._price < original_price
+    assert product.price == 50.0
+    assert product.price < original_price
 
 
 @mock.patch("builtins.input", side_effect=["n"])
 def test_product_price_decrease_cancel(mock_input, product):
-    original_price = product._price
+    original_price = product.price
     product.price = 50.0  # Пытаемся снизить цену, но отменяем
-    assert product._price == original_price  # Цена остаётся прежней
+    assert product.price == original_price  # Цена остаётся прежней
 
 
 @mock.patch("builtins.input", side_effect=["n"])
