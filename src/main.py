@@ -52,21 +52,21 @@ class Product:
             quantity=product_data.get("quantity")
         )
 
+    def __str__(self):
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        return self.__price*self.quantity + other.__price*other.quantity
+
 
 # Создаем класс Category
 class Category(Product):
-    # Описываем атрибуты класса
-    name: str
-    description: str
-    __products: list
     category_count = 0
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, products):
         self.name = name
         self.description = description
-        self.__products = []
-
-    """Функция, которая вносит в список товваров категории объекты класса Product"""
+        self.__products = products  # Присваиваем продукты из параметра
 
     @property
     def products(self):
@@ -76,45 +76,55 @@ class Category(Product):
         self.__products.append(product)
         Category.category_count += 1
 
+    def __iter__(self):
+        return CategoryIterator(self.__products)
 
-    def get_products(self):
-        return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
+    def get_total_quantity(self):
+        total_quantity = 0
+        for product in self.__products:
+            total_quantity += product.quantity  # Используем атрибут quantity
+        return total_quantity
 
-if __name__ == "__main__":
+    def __str__(self):
+        return f"{self.name}, количество продуктов: {self.get_total_quantity()} шт."
+
+
+class CategoryIterator:
+    def __init__(self, products):
+        self.__products = products
+        self.index = 0
+        self.stop = len(self.__products)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index < self.stop:
+            product = self.__products[self.index]
+            self.index += 1
+            return product
+        else:
+            raise StopIteration
+
+
+if __name__ == '__main__':
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
+    print(str(product1))
+    print(str(product2))
+    print(str(product3))
+
     category1 = Category(
         "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни"
+        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+        [product1, product2, product3]
     )
 
-    # Добавляем продукты в категорию
-    category1.add_product(product1)
-    category1.add_product(product2)
-    category1.add_product(product3)
+    print(str(category1))
+    print(category1.products)
 
-    print(category1.get_products())
-    product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-    category1.add_product(product4)
-
-    print(category1.get_products())
-    print(Category.category_count)
-
-    new_product = Product.new_product(
-        {"name": "Samsung Galaxy S23 Ultra", "description": "256GB, Серый цвет, 200MP камера", "price": 180000.0,
-         "quantity": 5}, category1.products)   # Используем геттер для получения списка продуктов
-
-    print(new_product.name)
-    print(new_product.description)
-    print(new_product.price)
-    print(new_product.quantity)
-
-    # new_product.price = 800
-    # print(new_product.price)
-
-    # new_product.price = -100
-    # print(new_product.price)
-    # # new_product.price = 0
-    # # print(new_product.price)
+    print(product1 + product2)
+    print(product1 + product3)
+    print(product2 + product3)
