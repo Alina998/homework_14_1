@@ -70,15 +70,16 @@ class Category(Product):
 
     @property
     def products(self):
-        return self.__products   # Геттер для атрибута products
+        return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
+
 
     def add_product(self, product: Product):
         self.__products.append(product)
         Category.category_count += 1
 
 
-    def get_products(self):
-        return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
+    # def get_products(self):
+    #     return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
 
 if __name__ == "__main__":
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
@@ -95,11 +96,11 @@ if __name__ == "__main__":
     category1.add_product(product2)
     category1.add_product(product3)
 
-    print(category1.get_products())
+    print(category1.products)
     product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
     category1.add_product(product4)
 
-    print(category1.get_products())
+    print(category1.products)
     print(Category.category_count)
 
     new_product = Product.new_product(
