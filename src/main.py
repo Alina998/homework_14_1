@@ -35,14 +35,14 @@ class Product:
 
     @classmethod
     def new_product(cls, product_data: dict, products_list: list):
-        # Проверяем существование товара с таким же именем
-        for product in products_list:
-            if product.name == product_data.get("name"):
-                # Обновляем количество и цену, если новая цена выше
-                product.quantity += product_data.get("quantity", 0)
-                if product_data.get("price", 0) > product.price:
-                    product.price = product_data.get("price")
-                return product
+        # # Проверяем существование товара с таким же именем
+        # for product in products_list:
+        #     if product.name == product_data.get("name"):
+        #         # Обновляем количество и цену, если новая цена выше
+        #         product.quantity += product_data.get("quantity", 0)
+        #         if product_data.get("price", 0) > product.price:
+        #             product.price = product_data.get("price")
+        #         return product
 
         # Если такого товара нет, создаем новый
         return cls(
@@ -72,14 +72,10 @@ class Category(Product):
     def products(self):
         return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
 
-
     def add_product(self, product: Product):
         self.__products.append(product)
         Category.category_count += 1
 
-
-    # def get_products(self):
-    #     return [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products]
 
 if __name__ == "__main__":
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)

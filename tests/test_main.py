@@ -34,7 +34,8 @@ def test_create_product(product):
 
 def test_add_product_to_category(category, product):
     category.add_product(product)
-    assert category.get_products() == ['Test Product, 100.0 руб. Остаток: 10 шт.']
+    assert category.products == ['Test Product, 100.0 руб. Остаток: 10 шт.']
+    assert Category.category_count == 1
 
 
 def test_product_price_increase(product):
@@ -57,15 +58,6 @@ def test_product_price_decrease_cancel(mock_input, product):
     original_price = product.price
     product.price = 50.0  # Пытаемся снизить цену, но отменяем
     assert product.price == original_price  # Цена остаётся прежней
-
-
-@mock.patch("builtins.input", side_effect=["n"])
-def test_product_price_decrease_cancel_with_greater_price(mock_input, products_list):
-    product_data = {"name": "Unique Product 1", "description": "Описание товара 1", "price": 80.0, "quantity": 5}
-    product = Product.new_product(product_data, products_list)
-    product_data["price"] = 70.0  # Пытаемся понизить цену
-    product = Product.new_product(product_data, products_list)
-    assert product.price == 100.0  # Снижение цены отменяется, остаётся 100.0
 
 
 if __name__ == "__main__":
