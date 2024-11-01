@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from src.main import Category, Product
+from src.main import Category, LawnGrass, Product, Smartphone
 
 
 # Фикстуры
@@ -23,6 +23,21 @@ def products_list():
         Product("Iphone 15", "512GB, Gray space", 210000.0, 8),
         Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
     ]
+
+
+@pytest.fixture
+def smartphone():
+    return Smartphone("Samsung Galaxy S23 Ultra", "256GB", 180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
+
+
+@pytest.fixture
+def lawn_grass():
+    return LawnGrass("Трава Газонная", "Для парка", 1200.0, 10, "Россия", "15-20 дней", "Зеленый")
+
+
+@pytest.fixture
+def category(smartphone, lawn_grass):
+    return Category("Электроника", "Смартфоны и другая электронная техника", [smartphone, lawn_grass])
 
 
 def test_create_product(product):
@@ -48,13 +63,13 @@ def test_new_product_addition(products_list):
 
 
 def test_category_total_quantity(category):
-    assert category.get_total_quantity() == 27  # 5 + 8 + 14 = 27
+    assert category.get_total_quantity() == 15  # 5 + 10 = 15
 
 
 def test_category_add_product(category):
     new_product = Product("Google Pixel 7", "128GB, Black", 70000.0, 12)
     category.add_product(new_product)
-    assert category.get_total_quantity() == 39
+    assert category.get_total_quantity() == 27 # 15 + 12 = 27
 
 
 def test_product_price_increase(product):
@@ -84,7 +99,7 @@ def test_product_str(product):
 
 
 def test_category_str(category):
-    assert str(category) == "Смартфоны, количество продуктов: 27 шт."
+    assert str(category) == "Электроника, количество продуктов: 15 шт."
 
 
 def test_products_add_operator():
@@ -92,6 +107,58 @@ def test_products_add_operator():
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     total_price = product1 + product2
     assert total_price == (180000.0 * 5 + 210000.0 * 8)
+
+
+def test_smartphone_initialization(smartphone):
+    assert smartphone.name == "Samsung Galaxy S23 Ultra"
+    assert smartphone.description == "256GB"
+    assert smartphone.price == 180000.0
+    assert smartphone.quantity == 5
+    assert smartphone.efficiency == 95.5
+    assert smartphone.model == "S23 Ultra"
+    assert smartphone.memory == 256
+    assert smartphone.color == "Серый"
+
+
+def test_lawn_grass_initialization(lawn_grass):
+    assert lawn_grass.name == "Трава Газонная"
+    assert lawn_grass.description == "Для парка"
+    assert lawn_grass.price == 1200.0
+    assert lawn_grass.quantity == 10
+    assert lawn_grass.country == "Россия"
+    assert lawn_grass.germination_period == "15-20 дней"
+    assert lawn_grass.color == "Зеленый"
+
+
+def test_category_initialization(category):
+    assert category.name == "Электроника"
+    assert len(category.products) == 2
+    assert isinstance(category.products[0], Smartphone)
+    assert isinstance(category.products[1], LawnGrass)
+
+
+def test_add_product(category):
+    new_smartphone = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
+    category.add_product(new_smartphone)
+    assert len(category.products) == 3
+    assert category.products[2].model == "15"
+
+
+def test_add_invalid_product(category):
+    with pytest.raises(TypeError):
+        category.add_product("Возникла ошибка TypeError при добавлении не продукта")
+
+
+def test_add_same_product_type(smartphone):
+    another_smartphone = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
+    assert smartphone + another_smartphone == (smartphone.price * smartphone.quantity +
+                                                 another_smartphone.price * another_smartphone.quantity)
+
+
+def test_add_different_product_type(smartphone, lawn_grass):
+    with pytest.raises(TypeError) as excinfo:
+        _ = smartphone + lawn_grass
+    assert str(excinfo.value) == "Нельзя складывать товары разных классов: Smartphone, LawnGrass."
 
 
 if __name__ == "__main__":
