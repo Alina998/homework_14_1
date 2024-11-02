@@ -69,7 +69,7 @@ def test_category_total_quantity(category):
 def test_category_add_product(category):
     new_product = Product("Google Pixel 7", "128GB, Black", 70000.0, 12)
     category.add_product(new_product)
-    assert category.get_total_quantity() == 27 # 15 + 12 = 27
+    assert category.get_total_quantity() == 27  # 15 + 12 = 27
 
 
 def test_product_price_increase(product):
