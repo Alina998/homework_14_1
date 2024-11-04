@@ -12,6 +12,11 @@ def product():
 
 
 @pytest.fixture
+def product_with_no_quantity():
+    return Product(name="Test Product", description="Test Description", price=100.0, quantity=0)
+
+
+@pytest.fixture
 def category(products_list):
     return Category(name="Смартфоны", description="Категория смартфонов", products=products_list)
 
@@ -40,12 +45,22 @@ def category(smartphone, lawn_grass):
     return Category("Электроника", "Смартфоны и другая электронная техника", [smartphone, lawn_grass])
 
 
+@pytest.fixture
+def empty_category():
+    # Фикстура для пустой категории
+    return Category("Пустая категория", "Категория без продуктов", [])
+
+
 def test_create_product(product):
     assert product.name == "Test Product"
     assert product.description == "Test Description"
     assert product.price == 100.0
     assert product.quantity == 10
     assert Product.product_count == 1
+
+
+def value_error_test(product_with_no_quantity):
+    assert str(product_with_no_quantity) == "Товар с нулевым количеством не может быть добавлен."
 
 
 def test_new_product_addition(products_list):
@@ -135,6 +150,10 @@ def test_category_initialization(category):
     assert len(category.products) == 2
     assert isinstance(category.products[0], Smartphone)
     assert isinstance(category.products[1], LawnGrass)
+
+
+def test_middle_price_empty(empty_category):
+    assert empty_category.middle_price() == 0.0
 
 
 def test_add_product(category):
